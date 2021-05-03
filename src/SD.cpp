@@ -413,7 +413,7 @@ File SDClass::open(const char *filepath, uint8_t mode) {
     if (_useMockData) {
         result = new InMemoryFile(filepath, _fileData, _fileSize, mode  );
     } else
-        result = new LinuxFile(filepath, FILE_READ);
+        result = new LinuxFile(filepath, mode);
     return File(result);
 }
 

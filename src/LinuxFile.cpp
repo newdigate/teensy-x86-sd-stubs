@@ -109,7 +109,7 @@ void LinuxFile::flush() {
 
 bool LinuxFile::seek(uint32_t pos) {
     if (! mockFile.is_open()) return false;
-    mockFile.seekp(pos, ios_base::seekdir::cur);
+    mockFile.seekp(pos, std::ios::cur);
     return true;
 }
 
