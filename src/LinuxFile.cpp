@@ -22,8 +22,8 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     localFileName = actualFileName.c_str();
     // cout << actualFileName;
     switch (mode) {
-        case xO_READ : mockFile.open(actualFileName); break;
-        case xO_WRITE : mockFile.open(actualFileName, std::fstream::out | std::fstream::app); break;
+        case O_READ : mockFile.open(actualFileName); break;
+        case O_WRITE : mockFile.open(actualFileName, std::fstream::out | std::fstream::app); break;
         default:
             break;
     }

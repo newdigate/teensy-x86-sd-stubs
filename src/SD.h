@@ -13,8 +13,8 @@
 
 using namespace std;
 
-#define FILE_READ xO_READ
-#define FILE_WRITE (xO_READ | xO_WRITE | xO_CREAT)
+#define FILE_READ O_READ
+#define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
 namespace SDLib {
 
     class AbstractFile  {
@@ -73,7 +73,7 @@ private:
     char* _data;
     uint32_t _position;
 public:
-    InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode = xO_READ);
+    InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode = O_READ);
     InMemoryFile(void);      // 'empty' constructor
     bool isDirectory(void) override;
     int write(uint8_t) override;
@@ -95,7 +95,7 @@ private:
     const char * localFileName;
     std::fstream mockFile = std::fstream();
 public:
-    LinuxFile(const char *name, uint8_t mode = xO_READ);
+    LinuxFile(const char *name, uint8_t mode = O_READ);
     LinuxFile(void);      // 'empty' constructor
     static std::streampos fileSize( const char* filePath );
     static bool is_directory( const char* pzPath );
