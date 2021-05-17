@@ -442,7 +442,7 @@ void SDClass::setSDCardFolderPath(std::string path) {
 }
 
 std::string SDClass::_sdCardFolderLocation = std::string("");
-bool SDClass::_useMockData = false;
+bool SDClass::_useMockData = true;
 char *SDClass::_fileData = nullptr;
 uint32_t SDClass::_fileSize = 0;
 
