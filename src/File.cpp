@@ -59,11 +59,11 @@ File::operator bool() {
 }
 
 int File::write(const uint8_t *buf, size_t size) {
-    file->write(buf, size);
+    return file->write(buf, size);
 }
 
 int File::write(uint8_t ch) {
-    file->write(ch);
+    return file->write(ch);
 }
 
 File::File(const File &f) : file(f.file) {
