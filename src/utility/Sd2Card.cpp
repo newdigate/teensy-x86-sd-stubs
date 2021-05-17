@@ -324,7 +324,6 @@ uint8_t Sd2Card::setSpiClock(uint32_t clock)
 //------------------------------------------------------------------------------
 // wait for card to go not busy
 uint8_t Sd2Card::waitNotBusy(uint16_t timeoutMillis) {
-  delay(timeoutMillis);
   return 0;
 }
 //------------------------------------------------------------------------------
