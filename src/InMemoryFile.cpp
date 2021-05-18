@@ -4,6 +4,7 @@ InMemoryFile::InMemoryFile(const char *name, char *data, uint32_t size, uint8_t 
     _fileName = name;
     _data = data;
     _size = size;
+    _position = 0;
 }
 
 InMemoryFile::InMemoryFile(void) {
