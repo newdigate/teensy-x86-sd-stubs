@@ -10,7 +10,7 @@ File::File(AbstractFile *abs) : file(abs) {
 }
 
 File::File() {
-
+    file = nullptr;
 }
 
 int File::read(void *buf, uint16_t nbyte) {
@@ -30,7 +30,8 @@ uint32_t File::size() {
 }
 
 void File::close() {
-    return file->close();
+    if (file != nullptr)
+        file->close();
 }
 
 bool File::isDirectory(void) {
