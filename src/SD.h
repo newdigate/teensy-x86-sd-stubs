@@ -142,6 +142,7 @@ private:
     static void setSDCardFileData(char *data, uint32_t size) {
         _fileData = data;
         _fileSize = size;
+        _useMockData = true;
     }
 
     // This needs to be called to set up the connection to the SD card
