@@ -6,7 +6,7 @@
 #include "Print.h"
 #include <cstdio>
 #include "utility/SdFatUtil.h"
-
+#include <dirent.h>
 #include <iostream>
 #include <fstream>
 #include <cstdint>
@@ -16,6 +16,7 @@ using namespace std;
 #define FILE_READ O_READ
 #define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
 namespace SDLib {
+    class File;
 
     class AbstractFile  {
     public:
@@ -36,6 +37,7 @@ namespace SDLib {
         virtual uint32_t size() = 0;
         virtual void close() = 0;
         virtual operator bool() = 0;
+        virtual File openNextFile(void) = 0;
     };
 
 class File {
@@ -66,6 +68,7 @@ public:
     const char * name();
 
     bool isDirectory(void);
+    File openNextFile(void);
 };
 
 class InMemoryFile : public AbstractFile {
@@ -88,12 +91,16 @@ public:
     uint32_t size() override;
     void close() override;
     operator bool() override;
+    File openNextFile(void) override;
+
 };
 
 class LinuxFile : public AbstractFile {
 private:
     const char * localFileName;
+    char * path;
     std::fstream mockFile = std::fstream();
+    DIR *dp = NULL;
 public:
     LinuxFile(const char *name, uint8_t mode = O_READ);
     LinuxFile(void);      // 'empty' constructor
@@ -111,11 +118,12 @@ public:
     uint32_t size() override;
     void close() override;
     explicit operator bool() override {
-        return mockFile.is_open();
+        return (mockFile.is_open() ||  isDirectory());
     }
     bool isDirectory(void) override {
         return is_directory(localFileName);
     }
+    File openNextFile(void) override;
 };
 
 class SDClass {
