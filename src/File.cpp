@@ -56,7 +56,7 @@ void File::flush() {
 
 File::operator bool() {
     if (file == nullptr) return false;
-    return true;
+    return file->operator bool();
 }
 
 int File::write(const uint8_t *buf, size_t size) {
@@ -69,4 +69,8 @@ int File::write(uint8_t ch) {
 
 File::File(const File &f) : file(f.file) {
 
+}
+
+File File::openNextFile(void) {
+    return file->openNextFile();
 }

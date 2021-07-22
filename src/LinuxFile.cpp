@@ -13,22 +13,35 @@
  */
 
 #include "SD.h"
-#include <dirent.h>
+
+#include <string>
 
 using namespace std;
 
 LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     std::string actualFileName = SDClass::getSDCardFolderPath() + std::string("/") + std::string(name);
-    localFileName = actualFileName.c_str();
+    localFileName = new char[actualFileName.length() + 1] {0};
+    memcpy((char*)localFileName, actualFileName.c_str(), actualFileName.length());
+    
+    size_t last_slash_idx = actualFileName.rfind('/');
+    if (std::string::npos != last_slash_idx)
+    {
+        string temppath = actualFileName.substr(0, last_slash_idx);
+        path = new char[temppath.length() + 1] {0};
+        memcpy(path, temppath.c_str(), temppath.length());
+    }
+
     // cout << actualFileName;
-    switch (mode) {
-        case O_READ : mockFile.open(actualFileName); break;
-        case O_WRITE : mockFile.open(actualFileName, std::fstream::out | std::fstream::app); break;
-        default:
-            break;
+    if (!is_directory(localFileName) ) {
+        switch (mode) {
+            case O_READ : mockFile.open(actualFileName); break;
+            case O_WRITE : mockFile.open(actualFileName, std::fstream::out | std::fstream::app); break;
+            default:
+                break;
+        }
+        _size = fileSize(actualFileName.c_str());
     }
     _fileName = name;
-    _size = fileSize(actualFileName.c_str());
 }
 
 std::streampos LinuxFile::fileSize( const char* filePath ){
@@ -131,4 +144,39 @@ int LinuxFile::read(void *buf, uint16_t nbyte) {
     char *bbb = (char *)buf;
     mockFile.read(bbb, nbyte);
     return nbyte;
+}
+
+File LinuxFile::openNextFile(void) {
+    bool isCurrentFileADirectory = is_directory(localFileName);
+
+    struct dirent *entry;
+    
+    if (!dp) 
+        dp = opendir(path);
+
+    if (dp == NULL) {
+        perror("opendir: Path does not exist or could not be read.");
+        return File(new InMemoryFile());
+    }
+
+    if (isCurrentFileADirectory){
+        while (true) {
+            bool isCurrentFileADirectory = false;
+            entry = readdir(dp);
+        
+            if (entry != NULL) {
+                cout << entry->d_name << std::endl;
+                char *nextFileName = new char[strlen(entry->d_name) + 1] {0};
+                memcpy(nextFileName, entry->d_name, strlen(entry->d_name));
+                File f = File(new LinuxFile(nextFileName, O_READ));
+                return f;
+            } else 
+                break;
+        }
+    }
+
+    
+    //closedir(dp);
+
+    return File( new InMemoryFile());
 }
