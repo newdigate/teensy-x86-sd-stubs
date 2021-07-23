@@ -77,10 +77,6 @@ uint32_t InMemoryFile::size() {
 void InMemoryFile::close() {
 }
 
-InMemoryFile::operator bool() {
-    return _size > -1;
-}
-
 File InMemoryFile::openNextFile(void) {
     return File( new InMemoryFile());
 }

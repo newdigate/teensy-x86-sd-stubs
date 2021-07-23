@@ -90,7 +90,9 @@ public:
     uint32_t position() override;
     uint32_t size() override;
     void close() override;
-    operator bool() override;
+    explicit operator bool() override {
+         return _size >= 0;
+    }
     File openNextFile(void) override;
 
 };

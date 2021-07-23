@@ -56,7 +56,8 @@ void File::flush() {
 
 File::operator bool() {
     if (file == nullptr) return false;
-    return file->operator bool();
+    bool result = file->operator bool();
+    return result;
 }
 
 int File::write(const uint8_t *buf, size_t size) {
