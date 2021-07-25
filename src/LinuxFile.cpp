@@ -122,7 +122,7 @@ void LinuxFile::flush() {
 
 bool LinuxFile::seek(uint32_t pos) {
     if (! mockFile.is_open()) return false;
-    mockFile.seekp(pos, std::ios::cur);
+    mockFile.seekp(pos, std::ios::beg);
     return true;
 }
 
