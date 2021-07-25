@@ -141,9 +141,9 @@ void LinuxFile::close() {
 }
 
 int LinuxFile::read(void *buf, uint16_t nbyte) {
-    char *bbb = (char *)buf;
-    mockFile.read(bbb, nbyte);
-    return nbyte;
+    mockFile.read((char *)buf, nbyte);
+    int bytesRead = mockFile.gcount();
+    return bytesRead;
 }
 
 File LinuxFile::openNextFile(void) {
