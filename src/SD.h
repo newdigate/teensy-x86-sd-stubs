@@ -20,7 +20,7 @@ namespace SDLib {
 
     class AbstractFile  {
     public:
-        uint32_t _size = -1;
+        int32_t _size = -1;
         bool _isDirectory;
         const char *_fileName;
 
