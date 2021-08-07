@@ -62,7 +62,7 @@ jobs:
         run: |
           mkdir ../output
           test/tests --output_format=XML --report_level=detailed  2> ../output/test-results.xml
-          xmllint --format ../test-results.xml > ../output/test-results-formatted.xml
+          xmllint --format ../output/test-results.xml > ../output/test-results-formatted.xml
 
       - name: upload artifacts
         if: always()      
