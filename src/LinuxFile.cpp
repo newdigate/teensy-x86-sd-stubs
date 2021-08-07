@@ -34,7 +34,7 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     // cout << actualFileName;
     if (!is_directory(localFileName) ) {
 
-        iostream::openmode flags = 0;
+        iostream::openmode flags = static_cast<iostream::openmode>(0);
         if ((mode & O_READ) == O_READ)
             flags |= std::fstream::in;
 
