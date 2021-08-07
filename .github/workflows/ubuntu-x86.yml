@@ -60,7 +60,8 @@ jobs:
         shell: bash
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
-          test/tests --output_format=XML --report_level=detailed  2> ../test-results.xml
+          mkdir ../output
+          test/tests --output_format=XML --report_level=detailed  2> ../output/test-results.xml
           xmllint --format ../test-results.xml > ../output/test-results-formatted.xml
 
       - name: upload artifacts
