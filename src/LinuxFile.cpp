@@ -33,12 +33,18 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
 
     // cout << actualFileName;
     if (!is_directory(localFileName) ) {
-        switch (mode) {
-            case O_READ : mockFile.open(actualFileName); break;
-            case O_WRITE : mockFile.open(actualFileName, std::fstream::out | std::fstream::app); break;
-            default:
-                break;
-        }
+
+        iostream::openmode flags = {0};
+        if ((mode & O_READ) == O_READ)
+            flags |= std::fstream::in;
+
+        if ((mode & O_WRITE) == O_WRITE)
+            flags |= std::fstream::out;
+
+        if ((mode & O_APPEND) == O_APPEND)
+            flags |= std::fstream::app;
+
+        mockFile.open(actualFileName, flags);
         _size = fileSize(actualFileName.c_str());
     }
     _fileName = name;
