@@ -147,7 +147,7 @@ private:
 
     static std::string getSDCardFolderPath();
 
-    static void setSDCardFolderPath(std::string path);
+    static void setSDCardFolderPath(std::string path, bool createDirectoryIfNotAlreadyExisting = false);
     
     static void setSDCardFileData(char *data, uint32_t size) {
         _fileData = data;

@@ -436,9 +436,14 @@ std::string SDClass::getSDCardFolderPath() {
     return _sdCardFolderLocation;
 }
 
-void SDClass::setSDCardFolderPath(std::string path) {
+void SDClass::setSDCardFolderPath(std::string path, bool createDirectoryIfNotAlreadyExisting) {
+	_useMockData = false;
+	_sdCardFolderLocation = "";
+	if (createDirectoryIfNotAlreadyExisting && !SD.exists(path) ) {
+		SD.mkdir(path);
+	}
+
     _sdCardFolderLocation = path;
-    _useMockData = false;
 }
 
 std::string SDClass::_sdCardFolderLocation = std::string("");
@@ -447,10 +452,13 @@ char *SDClass::_fileData = nullptr;
 uint32_t SDClass::_fileSize = 0;
 
 bool SDClass::mkdir(const char *filepath) {
-    if (_sdCardFolderLocation.size() == 0)
-        return true;
+    std::string path;
+	
+	if (_sdCardFolderLocation.size() == 0)
+		path = std::string(filepath);
+	else
+		path = _sdCardFolderLocation + "/" + std::string(filepath);
 
-    std::string path = _sdCardFolderLocation + "/" + std::string(filepath);
     if (!exists(path.c_str())) {
         std::string cmd = std::string("mkdir -p ") + std::string(path);
         system(cmd.c_str());
