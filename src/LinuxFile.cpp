@@ -171,7 +171,7 @@ File LinuxFile::openNextFile(void) {
             entry = readdir(dp);
         
             if (entry != NULL) {
-                cout << entry->d_name << std::endl;
+                //cout << entry->d_name << std::endl;
                 char *nextFileName = new char[strlen(entry->d_name) + 1] {0};
                 memcpy(nextFileName, entry->d_name, strlen(entry->d_name));
                 File f = File(new LinuxFile(nextFileName, O_READ));
