@@ -5,11 +5,13 @@ InMemoryFile::InMemoryFile(const char *name, char *data, uint32_t size, uint8_t 
     _data = data;
     _size = size;
     _position = 0;
+    _isOpen = true;
 }
 
 InMemoryFile::InMemoryFile(void) {
   _size = -1;
   _position = 0;
+  _isOpen = true;
 }
 
 // a directory is a special type of file
@@ -53,7 +55,7 @@ int InMemoryFile::read(void *buf, uint16_t nbyte) {
 }
 
 int InMemoryFile::available() {
-    return (_position < _size);
+    return _isOpen & (_position < _size);
 }
 
 void InMemoryFile::flush() {
@@ -75,6 +77,9 @@ uint32_t InMemoryFile::size() {
 }
 
 void InMemoryFile::close() {
+    if (_isOpen) {
+        _isOpen = false;
+    }
 }
 
 File InMemoryFile::openNextFile(void) {

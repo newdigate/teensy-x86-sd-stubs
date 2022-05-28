@@ -75,6 +75,7 @@ class InMemoryFile : public AbstractFile {
 private:
     char* _data;
     uint32_t _position;
+    bool _isOpen;
 public:
     InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode = O_READ);
     InMemoryFile(void);      // 'empty' constructor
