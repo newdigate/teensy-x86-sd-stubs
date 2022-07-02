@@ -1225,7 +1225,7 @@ size_t SdFile::write(const void* buf, uint16_t nbyte) {
  *
  * Use SdFile::writeError to check for errors.
  */
-int SdFile::write(uint8_t b) {
+size_t SdFile::write(uint8_t b) {
   return write(&b, 1);
 }
 //------------------------------------------------------------------------------
