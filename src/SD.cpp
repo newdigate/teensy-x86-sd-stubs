@@ -421,9 +421,9 @@ bool SDClass::exists(const char *filepath) {
     if (_useMockData)
     	return true;
 
-    const string path = _sdCardFolderLocation + "/" + std::string(filepath);
+    const std::string path = _sdCardFolderLocation + "/" + std::string(filepath);
     const char *pathCstr = path.c_str();
-    fstream file(pathCstr);
+    std::fstream file(pathCstr);
     bool isFile = (bool)file;
     if (isFile)
         return true;

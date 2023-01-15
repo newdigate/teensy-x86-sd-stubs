@@ -16,8 +16,6 @@
 
 #include <string>
 
-using namespace std;
-
 LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     std::string actualFileName = SDClass::getSDCardFolderPath() + std::string("/") + std::string(name);
     localFileName = new char[actualFileName.length() + 1] {0};
@@ -26,7 +24,7 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     size_t last_slash_idx = actualFileName.rfind('/');
     if (std::string::npos != last_slash_idx)
     {
-        string temppath = actualFileName.substr(0, last_slash_idx);
+        std::string temppath = actualFileName.substr(0, last_slash_idx);
         path = new char[temppath.length() + 1] {0};
         memcpy(path, temppath.c_str(), temppath.length());
     }
@@ -34,7 +32,7 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     // cout << actualFileName;
     if (!is_directory(localFileName) ) {
 
-        iostream::openmode flags = static_cast<iostream::openmode>(0);
+        std::iostream::openmode flags = static_cast<std::iostream::openmode>(0);
         if ((mode & O_READ) == O_READ)
             flags |= std::fstream::in;
 
@@ -45,6 +43,9 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
             flags |= std::fstream::app;
 
         mockFile.open(actualFileName, flags);
+        if (!mockFile) {
+            printf("Not able to open %s\n", actualFileName.c_str());
+        }
         _size = fileSize(actualFileName.c_str());
     }
     _fileName = name;

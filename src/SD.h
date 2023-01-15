@@ -11,8 +11,6 @@
 #include <fstream>
 #include <cstdint>
 
-using namespace std;
-
 #define FILE_READ O_READ
 #define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
 namespace SDLib {
