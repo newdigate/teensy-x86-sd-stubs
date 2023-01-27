@@ -23,8 +23,6 @@
  * \file
  * Sd2Card class
  */
-#include "Sd2PinMap.h"
-#include "SdInfo.h"
 #include "Arduino.h"
 
 //------------------------------------------------------------------------------
@@ -136,15 +134,18 @@ class Sd2Card {
    * Read a cards CID register. The CID contains card identification
    * information such as Manufacturer ID, Product name, Product serial
    * number and Manufacturing date. */
+  /*
   uint8_t readCID(cid_t* cid) {
-    return readRegister(CMD10, cid);
-  }
+      return 0;
+  }*/
   /**
    * Read a cards CSD register. The CSD contains Card-Specific Data that
    * provides information regarding access to the card's contents. */
+  /*
   uint8_t readCSD(csd_t* csd) {
     return readRegister(CMD9, csd);
   }
+  */
   void readEnd(void);
   uint8_t setSckRate(uint8_t sckRateID);
 #ifdef USE_SPI_LIB
@@ -167,7 +168,6 @@ class Sd2Card {
   uint8_t type_;
   // private functions
   uint8_t cardAcmd(uint8_t cmd, uint32_t arg) {
-    cardCommand(CMD55, 0);
     return cardCommand(cmd, arg);
   }
   uint8_t cardCommand(uint8_t cmd, uint32_t arg);

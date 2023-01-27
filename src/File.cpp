@@ -1,4 +1,5 @@
 #include "SD.h"
+using namespace SDLib;
 
 // returns a pointer to the file name
 const char *File::name(void) {

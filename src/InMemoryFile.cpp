@@ -1,5 +1,7 @@
 #include "SD.h"
 
+using namespace SDLib;
+
 InMemoryFile::InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode) {
     _fileName = name;
     _data = data;

@@ -12,9 +12,17 @@
 
  */
 
+
+#ifndef _MSC_VER
+#else
+//#include <fileapi.h>
+#include <Windows.h>
+//#include <handleapi.h>
+#endif
+#include <string>
 #include "SD.h"
 
-#include <string>
+using namespace SDLib;
 
 LinuxFile::LinuxFile(const char *name, uint8_t mode) {
     std::string actualFileName = SDClass::getSDCardFolderPath() + std::string("/") + std::string(name);
@@ -66,7 +74,7 @@ std::streampos LinuxFile::fileSize( const char* filePath ){
 bool LinuxFile::is_directory( const char* pzPath )
 {
     if ( pzPath == NULL) return false;
-
+#ifndef _MSC_VER
     DIR *pDir;
     bool bExists = false;
 
@@ -79,6 +87,12 @@ bool LinuxFile::is_directory( const char* pzPath )
     }
 
     return bExists;
+#else
+    DWORD dwAttrib = GetFileAttributes(pzPath);
+
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+        (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+#endif
 }
 
 int LinuxFile::write(uint8_t val) {
@@ -155,7 +169,7 @@ int LinuxFile::read(void *buf, uint16_t nbyte) {
 
 File LinuxFile::openNextFile(void) {
     bool isCurrentFileADirectory = is_directory(localFileName);
-
+#ifndef _MSC_VER
     struct dirent *entry;
     
     if (!dp) 
@@ -186,4 +200,16 @@ File LinuxFile::openNextFile(void) {
     //closedir(dp);
 
     return File( new InMemoryFile());
+#else
+    HANDLE hFind;
+    WIN32_FIND_DATA FindFileData;
+
+    if ((hFind = FindFirstFile(path, &FindFileData)) != INVALID_HANDLE_VALUE) {
+        do {
+            printf("%s\n", FindFileData.cFileName);
+        } while (FindNextFile(hFind, &FindFileData));
+        FindClose(hFind);
+    }
+    return File(new InMemoryFile());
+#endif
 }
