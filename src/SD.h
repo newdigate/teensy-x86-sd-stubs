@@ -198,5 +198,7 @@ namespace SDLib {
         friend class File;
         friend bool callback_openPath(SdFile&, const char*, bool, void*);
     };
+
+    SDClass SD;
 }
 #endif

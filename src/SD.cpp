@@ -56,8 +56,7 @@
 namespace SDLib {
 
 
-	class SDClass;
-	SDClass SD;
+
 
 // Used by `getNextPathComponent`
 #define MAX_COMPONENT_LEN 12 // What is max length?
