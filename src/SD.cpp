@@ -189,7 +189,7 @@ bool walkPath(const char *filepath, SdFile& parentDir,
 	  break;
 	}
 
-	bool exists = (*p_child).open(*p_parent, buffer, O_RDONLY);
+	bool exists = (*p_child).open(p_parent, buffer, O_RDONLY);
 
 	// If it's one we've created then we
 	// don't need the parent handle anymore.
@@ -245,7 +245,7 @@ bool callback_pathExists(SdFile& parentDir, const char *filePathComponent,
   */
   SdFile child;
 
-  bool exists = child.open(parentDir, filePathComponent, O_RDONLY);
+  bool exists = child.open(&parentDir, filePathComponent, O_RDONLY);
   
   if (exists) {
 	 child.close();
@@ -272,7 +272,7 @@ bool callback_makeDirPath(
   
   result = callback_pathExists(parentDir, filePathComponent, isLastComponent, object);
   if (!result) {
-	result = child.makeDir(parentDir, filePathComponent);
+	result = child.makeDir(&parentDir, filePathComponent);
   } 
   
   return result;
@@ -315,7 +315,7 @@ boolean callback_openPath(SdFile& parentDir, char *filePathComponent,
 bool callback_remove(SdFile& parentDir, const char *filePathComponent,
 			bool isLastComponent, void * /* object */) {
   if (isLastComponent) {
-	return SdFile::remove(parentDir, filePathComponent);
+	return SdFile::remove(&parentDir, filePathComponent);
   }
   return true;
 }
@@ -324,7 +324,7 @@ bool callback_rmdir(SdFile& parentDir, const char *filePathComponent,
 			bool isLastComponent, void * /* object */) {
   if (isLastComponent) {
 	SdFile f;
-	if (!f.open(parentDir, filePathComponent, O_READ)) return false;
+	if (!f.open(&parentDir, filePathComponent, O_READ)) return false;
 	return f.rmDir();
   }
   return true;
@@ -413,7 +413,7 @@ File SDClass::open(const char *filepath, uint8_t mode) {
     if (_useMockData) {
         result = new InMemoryFile(filepath, _fileData, _fileSize, mode  );
     } else
-        result = new LinuxFile(filepath, mode);
+        result = new LinuxFile(filepath, mode, *this);
     return File(result);
 }
 
@@ -439,17 +439,12 @@ std::string SDClass::getSDCardFolderPath() {
 void SDClass::setSDCardFolderPath(std::string path, bool createDirectoryIfNotAlreadyExisting) {
 	_useMockData = false;
 	_sdCardFolderLocation = "";
-	if (createDirectoryIfNotAlreadyExisting && !SD.exists(path) ) {
-		SD.mkdir(path);
+	if (createDirectoryIfNotAlreadyExisting && !exists(path) ) {
+		mkdir(path);
 	}
 
     _sdCardFolderLocation = path;
 }
-
-std::string SDClass::_sdCardFolderLocation = std::string("");
-bool SDClass::_useMockData = true;
-char *SDClass::_fileData = nullptr;
-uint32_t SDClass::_fileSize = 0;
 
 bool SDClass::mkdir(const char *filepath) {
     std::string path;

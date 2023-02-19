@@ -19,21 +19,41 @@
  */
 #ifndef SdFat_h
 #define SdFat_h
-/**
- * \file
- * SdFile and SdVolume classes
- */
-#if defined (__AVR__) || defined (__CPU_ARC__) 
-#include <avr/pgmspace.h>
-#endif
+
 #include "Sd2Card.h"
 #include "FatStructs.h"
 #include "Print.h"
+
+#pragma push_macro("O_WRONLY")
+#pragma push_macro("O_RDONLY")
+#pragma push_macro("O_READ")
+#pragma push_macro("O_WRITE")
+#pragma push_macro("O_RDWR")
+#pragma push_macro("O_ACCMODE")
+#pragma push_macro("O_APPEND")
+#pragma push_macro("O_SYNC")
+#pragma push_macro("O_CREAT")
+#pragma push_macro("O_EXCL")
+#pragma push_macro("O_TRUNC")
+
+#undef O_WRONLY
+#undef O_RDONLY
+#undef O_READ
+#undef O_WRITE
+#undef O_RDWR
+#undef O_ACCMODE
+#undef O_APPEND
+#undef O_SYNC
+#undef O_CREAT
+#undef O_EXCL
+#undef O_TRUNC
+
+
 //------------------------------------------------------------------------------
 /**
  * Allow use of deprecated functions if non-zero
  */
-#define ALLOW_DEPRECATED_FUNCTIONS 1
+#define ALLOW_DEPRECATED_FUNCTIONS 0
 //------------------------------------------------------------------------------
 // forward declaration since SdVolume is used in SdFile
 class SdVolume;
@@ -548,4 +568,18 @@ class SdVolume {
     return sdCard_->writeBlock(block, dst);
   }
 };
+
+#pragma pop_macro("O_WRONLY")
+#pragma pop_macro("O_RDONLY")
+#pragma pop_macro("O_READ")
+#pragma pop_macro("O_WRITE")
+#pragma pop_macro("O_RDWR")
+#pragma pop_macro("O_ACCMODE")
+#pragma pop_macro("O_APPEND")
+#pragma pop_macro("O_SYNC")
+#pragma pop_macro("O_CREAT")
+#pragma pop_macro("O_EXCL")
+#pragma pop_macro("O_TRUNC")
+
+
 #endif  // SdFat_h

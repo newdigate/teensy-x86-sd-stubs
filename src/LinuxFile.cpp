@@ -16,8 +16,8 @@
 
 #include <string>
 
-LinuxFile::LinuxFile(const char *name, uint8_t mode) {
-    std::string actualFileName = SDClass::getSDCardFolderPath() + std::string("/") + std::string(name);
+LinuxFile::LinuxFile(const char *name, uint8_t mode, SDClass &sd) : _sd(sd) {
+    std::string actualFileName = sd.getSDCardFolderPath() + std::string("/") + std::string(name);
     localFileName = new char[actualFileName.length() + 1] {0};
     memcpy((char*)localFileName, actualFileName.c_str(), actualFileName.length());
     
@@ -41,6 +41,9 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode) {
 
         if ((mode & O_APPEND) == O_APPEND)
             flags |= std::fstream::app;
+
+        if ((mode & O_TRUNC) == O_TRUNC)
+            flags |= std::fstream::trunc;
 
         mockFile.open(actualFileName, flags);
         if (!mockFile) {
@@ -175,7 +178,7 @@ File LinuxFile::openNextFile(void) {
                 //cout << entry->d_name << std::endl;
                 char *nextFileName = new char[strlen(entry->d_name) + 1] {0};
                 memcpy(nextFileName, entry->d_name, strlen(entry->d_name));
-                File f = File(new LinuxFile(nextFileName, O_READ));
+                File f = File(new LinuxFile(nextFileName, O_READ, this->_sd));
                 return f;
             } else 
                 break;

@@ -15,6 +15,8 @@
 #define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
 namespace SDLib {
     class File;
+    class SDClass;
+    extern SDClass SD;
 
     class AbstractFile  {
     public:
@@ -103,8 +105,9 @@ private:
     std::fstream mockFile = std::fstream();
     DIR *dp = NULL;
 public:
-    LinuxFile(const char *name, uint8_t mode = O_READ);
-    LinuxFile(void);      // 'empty' constructor
+    LinuxFile(const char *name, uint8_t mode = O_READ, SDClass &sd = SD);
+    LinuxFile(SDClass &sd = SD);
+
     static std::streampos fileSize( const char* filePath );
     static bool is_directory( const char* pzPath );
     int write(uint8_t) override;
@@ -125,6 +128,7 @@ public:
         return is_directory(localFileName);
     }
     File openNextFile(void) override;
+    SDClass &_sd;
 };
 
 class SDClass {
@@ -137,18 +141,27 @@ private:
     // my quick&dirty iterator, should be replaced
     SdFile getParentDir(const char *filepath, int *indx);
 
-    static std::string _sdCardFolderLocation;
-    static bool _useMockData;
-    static char *_fileData;
-    static uint32_t _fileSize;
+    std::string _sdCardFolderLocation;
+    bool _useMockData;
+    char *_fileData;
+    uint32_t _fileSize;
 
-    public:
+public:
+    SDClass() {
 
-    static std::string getSDCardFolderPath();
+    }
 
-    static void setSDCardFolderPath(std::string path, bool createDirectoryIfNotAlreadyExisting = false);
+    SDClass(std::string sdCardFolderLocation) : 
+        _sdCardFolderLocation(sdCardFolderLocation) 
+    {
+
+    }
+
+    std::string getSDCardFolderPath();
+
+    void setSDCardFolderPath(std::string path, bool createDirectoryIfNotAlreadyExisting = false);
     
-    static void setSDCardFileData(char *data, uint32_t size) {
+    void setSDCardFileData(char *data, uint32_t size) {
         _fileData = data;
         _fileSize = size;
         _useMockData = true;
@@ -194,7 +207,6 @@ private:
     friend bool callback_openPath(SdFile&, const char *, bool, void *);
 };
 
-extern SDClass SD;
 
 };
 
