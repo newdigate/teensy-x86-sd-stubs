@@ -30,8 +30,13 @@ uint32_t File::size() {
 }
 
 void File::close() {
-    if (file != nullptr)
+    if (file != nullptr) {
         file->close();
+        file = nullptr;
+    } else 
+    {
+        Serial.println("WARNING: File::close() - file is already closed!!!!");
+    }
 }
 
 bool File::isDirectory(void) {
@@ -47,7 +52,7 @@ int File::peek() {
 }
 
 int File::available() {
-    return file->available();
+    return file != nullptr && file->available();
 }
 
 void File::flush() {
