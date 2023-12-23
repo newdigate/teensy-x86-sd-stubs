@@ -36,6 +36,7 @@ namespace SDLib {
         virtual void close() = 0;
         virtual operator bool() = 0;
         virtual File openNextFile(void) = 0;
+        virtual void rewindDirectory() {}
     };
 
 class File : public Stream {
