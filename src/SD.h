@@ -11,6 +11,8 @@
 #include <fstream>
 #include <cstdint>
 
+#define BUILTIN_SDCARD 254
+
 #define FILE_READ O_READ
 #define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
 namespace SDLib {
@@ -18,47 +20,44 @@ namespace SDLib {
     class SDClass;
     extern SDClass SD;
 
-    class AbstractFile  {
+    class AbstractFile : public Stream {
     public:
         int32_t _size = -1;
         bool _isDirectory;
         const char *_fileName;
 
-        virtual bool isDirectory(void) = 0;
-        virtual int write(uint8_t) = 0;
-        virtual int write(const uint8_t *buf, size_t size) = 0;
-        virtual int read() = 0;
-        virtual int peek() = 0;
-        virtual int available() = 0;
-        virtual void flush() = 0;
+        virtual bool isDirectory() = 0;
+        int read() override = 0;
         virtual int read(void *buf, uint16_t nbyte) = 0;
         virtual bool seek(uint32_t pos) = 0;
         virtual uint32_t position() = 0;
         virtual uint32_t size() = 0;
+        virtual bool truncate(uint64_t size=0) = 0;
         virtual void close() = 0;
         virtual operator bool() = 0;
         virtual File openNextFile(void) = 0;
     };
 
-class File {
+class File : public Stream {
 protected:
     AbstractFile *file;
 
 public:
 
-    File(AbstractFile *abs);
+    explicit File(AbstractFile *abs);
 
     File(const File& f);
 
     File();
 
-    int write(uint8_t ch);
+    size_t write(uint8_t ch) override;
 
-    int write(const uint8_t *buf, size_t size);
-    int read();
-    int peek();
-    int available();
-    void flush();
+    size_t write(const uint8_t *buf, size_t size) override;
+    int read() override;
+    int peek() override;
+    int available() override;
+    void flush() override;
+    bool truncate(uint64_t size=0);
     int read(void *buf, uint16_t nbyte);
     bool seek(uint32_t pos);
     uint32_t position();
@@ -66,9 +65,8 @@ public:
     void close();
     operator bool();
     const char * name();
-
-    bool isDirectory(void);
-    File openNextFile(void);
+    bool isDirectory();
+    File openNextFile();
 };
 
 class InMemoryFile : public AbstractFile {
@@ -80,12 +78,13 @@ public:
     InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode = O_READ);
     InMemoryFile(void);      // 'empty' constructor
     bool isDirectory(void) override;
-    int write(uint8_t) override;
-    int write(const uint8_t *buf, size_t size) override;
+    size_t write(uint8_t) override;
+    size_t write(const uint8_t *buf, size_t size) override;
     int read() override;
     int peek() override;
     int available() override;
     void flush() override;
+    bool truncate(uint64_t size) override;
     int read(void *buf, uint16_t nbyte) override;
     bool seek(uint32_t pos) override;
     uint32_t position() override;
@@ -94,7 +93,7 @@ public:
     explicit operator bool() override {
          return _size >= 0;
     }
-    File openNextFile(void) override;
+    File openNextFile() override;
 
 };
 
@@ -110,12 +109,13 @@ public:
 
     static std::streampos fileSize( const char* filePath );
     static bool is_directory( const char* pzPath );
-    int write(uint8_t) override;
-    int write(const uint8_t *buf, size_t size) override;
+    size_t write(uint8_t) override;
+    size_t write(const uint8_t *buf, size_t size) override;
     int read() override;
     int peek() override;
     int available() override;
     void flush() override;
+    bool truncate(uint64_t size) override;
     int read(void *buf, uint16_t nbyte) override;
     bool seek(uint32_t pos) override;
     uint32_t position() override;

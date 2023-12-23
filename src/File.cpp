@@ -24,6 +24,10 @@ bool File::seek(uint32_t pos) {
 uint32_t File::position() {
     return file->position();
 }
+bool File::truncate(uint64_t size) {
+    return file->truncate();
+}
+
 
 uint32_t File::size() {
     return file->size();
@@ -65,11 +69,11 @@ File::operator bool() {
     return result;
 }
 
-int File::write(const uint8_t *buf, size_t size) {
+size_t File::write(const uint8_t *buf, size_t size) {
     return file->write(buf, size);
 }
 
-int File::write(uint8_t ch) {
+size_t File::write(uint8_t ch) {
     return file->write(ch);
 }
 

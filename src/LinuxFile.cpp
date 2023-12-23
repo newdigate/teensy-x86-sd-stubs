@@ -15,6 +15,7 @@
 #include "SD.h"
 
 #include <string>
+#include <unistd.h>
 
 LinuxFile::LinuxFile(const char *name, uint8_t mode, SDClass &sd) : _sd(sd) {
     std::string actualFileName = sd.getSDCardFolderPath() + std::string("/") + std::string(name);
@@ -47,7 +48,7 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode, SDClass &sd) : _sd(sd) {
 
         mockFile.open(actualFileName, flags);
         if (!mockFile) {
-            printf("Not able to open %s\n", actualFileName.c_str());
+            std::cout << "Not able to open " << actualFileName;
         }
         _size = fileSize(actualFileName.c_str());
     }
@@ -84,11 +85,11 @@ bool LinuxFile::is_directory( const char* pzPath )
     return bExists;
 }
 
-int LinuxFile::write(uint8_t val) {
+size_t LinuxFile::write(uint8_t val) {
     return write(&val, 1);
 }
 
-int LinuxFile::write(const uint8_t *buf, size_t size) {
+size_t LinuxFile::write(const uint8_t *buf, size_t size) {
     size_t t;
     if (!mockFile.is_open()) {
         return 0;
@@ -189,4 +190,10 @@ File LinuxFile::openNextFile(void) {
     //closedir(dp);
 
     return File( new InMemoryFile());
+}
+
+bool LinuxFile::truncate(uint64_t size) {
+    if (::truncate(_fileName, size) != 0)
+        return false;
+    return true;
 }

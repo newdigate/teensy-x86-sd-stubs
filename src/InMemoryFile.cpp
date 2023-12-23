@@ -19,11 +19,11 @@ bool InMemoryFile::isDirectory(void) {
   return _isDirectory;
 }
 
-int InMemoryFile::write(uint8_t val) {
+size_t InMemoryFile::write(uint8_t val) {
     return write(&val, 1);
 }
 
-int InMemoryFile::write(const uint8_t *buf, size_t size) {
+size_t InMemoryFile::write(const uint8_t *buf, size_t size) {
     return 0;
 }
 
@@ -33,7 +33,7 @@ int InMemoryFile::peek() {
 
 int InMemoryFile::read() {
     if (_position >= _size) {
-        printf("!!! CRITICAL: read outside bounds of file...");
+        std::cout << "!!! CRITICAL: read outside bounds of file...";
         return 0;
     }
 
@@ -82,7 +82,13 @@ void InMemoryFile::close() {
     }
 }
 
+bool InMemoryFile::truncate(uint64_t size) {
+    _size=0;
+    _position = 0;
+    return true;
+}
+
 File InMemoryFile::openNextFile(void) {
-    return File( new InMemoryFile());
+    return File { new InMemoryFile()};
 }
 
