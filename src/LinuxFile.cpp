@@ -163,7 +163,7 @@ File LinuxFile::openNextFile(void) {
     struct dirent *entry;
     
     if (!dp) 
-        dp = opendir(path);
+        dp = opendir(isCurrentFileADirectory? localFileName : path);
 
     if (dp == NULL) {
         perror("opendir: Path does not exist or could not be read.");
