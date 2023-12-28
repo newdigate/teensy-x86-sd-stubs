@@ -412,8 +412,20 @@ File SDClass::open(const char *filepath, uint8_t mode) {
     AbstractFile *result;
     if (_useMockData) {
         result = new InMemoryFile(filepath, _fileData, _fileSize, mode  );
-    } else
-        result = new LinuxFile(filepath, mode, *this);
+    } else {
+        std::string pathString = std::string(filepath);
+        std::string fileNameString = std::string(filepath);
+        size_t last_slash_idx = pathString.rfind('/');
+        char *path = "";
+        if (std::string::npos != last_slash_idx)
+        {
+            fileNameString = fileNameString.substr(last_slash_idx+1, strlen(filepath)-last_slash_idx-1);
+            std::string temppath = pathString.substr(0, last_slash_idx);
+            path = new char[temppath.length() + 1] {0};
+            memcpy(path, temppath.c_str(), temppath.length());
+        }
+        result = new LinuxFile(fileNameString.c_str(), path, mode, *this);
+    }
     return File(result);
 }
 
@@ -491,6 +503,5 @@ bool SDClass::remove(const char *filepath) {
 SDClass SD;
 
 
-
-
+AbstractFile::AbstractFile(const char *fileName) : _fileName(fileName) {}
 };

@@ -1,6 +1,6 @@
 #include "SD.h"
 
-InMemoryFile::InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode) {
+InMemoryFile::InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode) : AbstractFile(name) {
     _fileName = name;
     _data = data;
     _size = size;
@@ -8,7 +8,7 @@ InMemoryFile::InMemoryFile(const char *name, char *data, uint32_t size, uint8_t 
     _isOpen = true;
 }
 
-InMemoryFile::InMemoryFile(void) {
+InMemoryFile::InMemoryFile(void) : AbstractFile("n/a") {
   _size = -1;
   _position = 0;
   _isOpen = true;

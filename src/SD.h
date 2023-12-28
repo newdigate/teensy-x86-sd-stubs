@@ -26,6 +26,8 @@ namespace SDLib {
         bool _isDirectory;
         const char *_fileName;
 
+        explicit AbstractFile(const char *fileName);
+
         virtual bool isDirectory() = 0;
         int read() override = 0;
         virtual int read(void *buf, uint16_t nbyte) = 0;
@@ -102,11 +104,12 @@ public:
 class LinuxFile : public AbstractFile {
 private:
     const char * localFileName;
-    char * path;
+    char * localPath;
+    const char * _path;
     std::fstream mockFile = std::fstream();
     DIR *dp = NULL;
 public:
-    LinuxFile(const char *name, uint8_t mode = O_READ, SDClass &sd = SD);
+    LinuxFile(const char *name, const char *path, uint8_t mode = O_READ, SDClass &sd = SD);
     LinuxFile(SDClass &sd = SD);
 
     static std::streampos fileSize( const char* filePath );

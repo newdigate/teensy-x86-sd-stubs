@@ -17,8 +17,13 @@
 #include <string>
 #include <unistd.h>
 
-LinuxFile::LinuxFile(const char *name, uint8_t mode, SDClass &sd) : _sd(sd) {
-    std::string actualFileName = sd.getSDCardFolderPath() + std::string("/") + std::string(name);
+LinuxFile::LinuxFile(const char *name, const char *path, uint8_t mode, SDClass &sd) : AbstractFile(name), _sd(sd) {
+    std::string actualFileName;
+    if (strlen(path)==0) {
+        actualFileName = sd.getSDCardFolderPath() + std::string("/") + std::string(name);
+    } else
+        actualFileName = sd.getSDCardFolderPath() + std::string("/") + std::string(path) + std::string("/") + std::string(name);
+
     localFileName = new char[actualFileName.length() + 1] {0};
     memcpy((char*)localFileName, actualFileName.c_str(), actualFileName.length());
     
@@ -26,9 +31,10 @@ LinuxFile::LinuxFile(const char *name, uint8_t mode, SDClass &sd) : _sd(sd) {
     if (std::string::npos != last_slash_idx)
     {
         std::string temppath = actualFileName.substr(0, last_slash_idx);
-        path = new char[temppath.length() + 1] {0};
-        memcpy(path, temppath.c_str(), temppath.length());
+        localPath = new char[temppath.length() + 1] {0};
+        memcpy(localPath, temppath.c_str(), temppath.length());
     }
+    _path = path;
 
     // cout << actualFileName;
     if (!is_directory(localFileName) ) {
@@ -163,7 +169,7 @@ File LinuxFile::openNextFile(void) {
     struct dirent *entry;
     
     if (!dp) 
-        dp = opendir(isCurrentFileADirectory? localFileName : path);
+        dp = opendir(isCurrentFileADirectory? localFileName : localPath);
 
     if (dp == NULL) {
         perror("opendir: Path does not exist or could not be read.");
@@ -172,14 +178,13 @@ File LinuxFile::openNextFile(void) {
 
     if (isCurrentFileADirectory){
         while (true) {
-            bool isCurrentFileADirectory = false;
             entry = readdir(dp);
         
             if (entry != NULL) {
-                //cout << entry->d_name << std::endl;
-                char *nextFileName = new char[strlen(entry->d_name) + 1] {0};
-                memcpy(nextFileName, entry->d_name, strlen(entry->d_name));
-                File f = File(new LinuxFile(nextFileName, O_READ, this->_sd));
+                auto l = _sd.getSDCardFolderPath().length();
+                std::string lfnString = std::string( localFileName );
+                std::string final = lfnString.substr(l+1, lfnString.length()-l-1);
+                File f = File(new LinuxFile(entry->d_name, final.c_str(), O_READ, this->_sd));
                 return f;
             } else 
                 break;
