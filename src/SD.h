@@ -14,7 +14,7 @@
 #define BUILTIN_SDCARD 254
 
 #define FILE_READ O_READ
-#define FILE_WRITE (O_READ | O_WRITE | O_CREAT)
+#define FILE_WRITE ( O_WRITE | O_CREAT)
 namespace SDLib {
     class File;
     class SDClass;
