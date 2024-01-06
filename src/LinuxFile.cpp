@@ -157,7 +157,7 @@ void LinuxFile::close() {
         mockFile.close();
 }
 
-int LinuxFile::read(void *buf, uint16_t nbyte) {
+int LinuxFile::read(void *buf, uint32_t nbyte) {
     mockFile.read((char *)buf, nbyte);
     int bytesRead = mockFile.gcount();
     return bytesRead;

@@ -30,7 +30,7 @@ namespace SDLib {
 
         virtual bool isDirectory() = 0;
         int read() override = 0;
-        virtual int read(void *buf, uint16_t nbyte) = 0;
+        virtual int read(void *buf, uint32_t nbyte) = 0;
         virtual bool seek(uint32_t pos) = 0;
         virtual uint32_t position() = 0;
         virtual uint32_t size() = 0;
@@ -61,7 +61,7 @@ public:
     int available() override;
     void flush() override;
     bool truncate(uint64_t size=0);
-    int read(void *buf, uint16_t nbyte);
+    int read(void *buf, uint32_t nbyte);
     bool seek(uint32_t pos);
     uint32_t position();
     uint32_t size();
@@ -89,7 +89,7 @@ public:
     int available() override;
     void flush() override;
     bool truncate(uint64_t size) override;
-    int read(void *buf, uint16_t nbyte) override;
+    int read(void *buf, uint32_t nbyte) override;
     bool seek(uint32_t pos) override;
     uint32_t position() override;
     uint32_t size() override;
@@ -121,7 +121,7 @@ public:
     int available() override;
     void flush() override;
     bool truncate(uint64_t size) override;
-    int read(void *buf, uint16_t nbyte) override;
+    int read(void *buf, uint32_t nbyte) override;
     bool seek(uint32_t pos) override;
     uint32_t position() override;
     uint32_t size() override;

@@ -13,7 +13,7 @@ File::File() {
     file = nullptr;
 }
 
-int File::read(void *buf, uint16_t nbyte) {
+int File::read(void *buf, uint32_t nbyte) {
     return file->read(buf, nbyte);
 }
 

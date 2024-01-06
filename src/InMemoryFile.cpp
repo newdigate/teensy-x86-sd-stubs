@@ -43,7 +43,7 @@ int InMemoryFile::read() {
 }
 
 // buffered read for more efficient, high speed reading
-int InMemoryFile::read(void *buf, uint16_t nbyte) {
+int InMemoryFile::read(void *buf, uint32_t nbyte) {
     char * target = (char*)buf;
     for (int i=0; i < nbyte; i++) {
         if  (_position >= _size)
