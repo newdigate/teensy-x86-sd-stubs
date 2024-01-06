@@ -467,9 +467,10 @@ bool SDClass::mkdir(const char *filepath) {
 		path = _sdCardFolderLocation + "/" + std::string(filepath);
 
     if (!exists(path.c_str())) {
-        std::string cmd = std::string("mkdir -p ") + std::string(path);
-        system(cmd.c_str());
-        return true;
+        std::string cmd = std::string("mkdir -p \"") + std::string(path) + "\"";
+        int result = system(cmd.c_str());
+    	if (result != 0) Serial.printf("Unable to mkdir '%s'\n", filepath);
+        return result == 0;
     }
     return true;
 }
