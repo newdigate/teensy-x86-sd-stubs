@@ -96,16 +96,22 @@ size_t LinuxFile::write(uint8_t val) {
 }
 
 size_t LinuxFile::write(const uint8_t *buf, size_t size) {
-    size_t t;
     if (!mockFile.is_open()) {
         return 0;
     }
 
     _size += size;
     char * memblock = (char *)buf;
-    mockFile.write(memblock, size);
 
-    return t;
+
+    size_t before = mockFile.tellp(); //current pos
+    if (mockFile.write(memblock, size)) {
+        //compute the difference
+        size_t numberOfBytesWritten = (size_t)mockFile.tellp() - before;
+        return numberOfBytesWritten;
+    }
+
+    return 0;
 }
 
 int LinuxFile::read() {
