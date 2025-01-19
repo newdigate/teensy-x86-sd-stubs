@@ -3,8 +3,6 @@ project(tests CXX C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(teensy_x86_stubs)
-include_directories(${teensy_x86_stubs_INCLUDE_DIR})
 
 set (Boost_USE_STATIC_LIBS OFF)
 find_package (Boost REQUIRED COMPONENTS unit_test_framework)
@@ -16,5 +14,5 @@ add_executable(tests
         test_write.cpp)
 
 target_link_libraries(tests teensy_x86_sd_stubs)
-target_link_libraries(tests ${teensy_x86_stubs_LIBS})
+target_link_libraries(tests teensy_x86_stubs)
 target_link_libraries(tests ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})

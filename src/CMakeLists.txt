@@ -4,9 +4,6 @@ set(teensy_x86_sd_stubs_VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(teensy_x86_stubs)
-include_directories(${teensy_x86_stubs_INCLUDE_DIR})
-
 set(SOURCE_FILES
 		File.cpp
 		SD.cpp
