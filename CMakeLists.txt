@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(teensy_x86_sd_stubs_root C CXX)
 include(cmake_declare_and_fetch.cmake.in)
-DeclareAndFetch(teensy_x86_stubs                https://github.com/newdigate/teensy-x86-stubs.git feature/shared_serial src)
+DeclareAndFetch(teensy_x86_stubs                https://github.com/newdigate/teensy-x86-stubs.git noinstall src)
 add_subdirectory(src)
 if(BUILD_TESTS)
     add_subdirectory(test)
