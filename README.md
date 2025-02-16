@@ -1,16 +1,17 @@
-# teensy-x86-sd-stubs
+# teensy x86 sd stubs
 [![Ubuntu-x64](https://github.com/newdigate/teensy-x86-sd-stubs/actions/workflows/ubuntu-x86.yml/badge.svg)](https://github.com/newdigate/teensy-x86-sd-stubs/actions/workflows/ubuntu-x86.yml)
 
-mock SD for teensy
+mock SD for arduino/teensy
 
 ## eco-system
 [cores](https://github.com/newdigate/teensy-x86-stubs)
 
-##### initialization
+## initialization
 * To map the root directory of the mock microSD card, file to a char* array, next SD file read access will return the data in the buffer
 ``` c++
     void SD::setSDCardFolderPath(std::string path, bool createDirectoryIfNotAlreadyExisting = false);
-
+```
+``` c++
     SD.setSDCardFolderPath("/Volume/SDcard1", true);
 ```
 
@@ -20,7 +21,7 @@ mock SD for teensy
     SD.setSDCardFileData(buffer, strlen(buffer));
 ```
 
-##### main.cpp
+## main.cpp
 ``` c++
 #include <Arduino.h>
 #include <SD.h>
@@ -42,7 +43,7 @@ int main(int argc, char **argv){
     std::cout << bytesRead << " bytes read: \n" << output;
 }
 ```
-##### output
+## output
 ```
 starting app...
 24 bytes read: 
