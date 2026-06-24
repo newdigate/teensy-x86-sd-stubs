@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdint>
+#include <memory>
 
 #define BUILTIN_SDCARD 254
 
@@ -28,6 +29,8 @@ namespace SDLib {
 
         explicit AbstractFile(const char *fileName);
 
+        virtual ~AbstractFile() = default;
+
         virtual bool isDirectory() = 0;
         int read() override = 0;
         virtual int read(void *buf, uint32_t nbyte) = 0;
@@ -43,7 +46,7 @@ namespace SDLib {
 
 class File : public Stream {
 protected:
-    AbstractFile *file;
+    std::shared_ptr<AbstractFile> file;
 
 public:
 
@@ -81,6 +84,7 @@ private:
 public:
     InMemoryFile(const char *name, char *data, uint32_t size, uint8_t mode = O_READ);
     InMemoryFile(void);      // 'empty' constructor
+    ~InMemoryFile() override = default;  // does NOT own _data (borrowed from caller)
     bool isDirectory(void) override;
     size_t write(uint8_t) override;
     size_t write(const uint8_t *buf, size_t size) override;
@@ -103,14 +107,15 @@ public:
 
 class LinuxFile : public AbstractFile {
 private:
-    const char * localFileName;
-    char * localPath;
+    const char * localFileName = nullptr;
+    char * localPath = nullptr;
     const char * _path;
     std::fstream mockFile = std::fstream();
     DIR *dp = NULL;
 public:
     LinuxFile(const char *name, const char *path, uint8_t mode = O_READ, SDClass &sd = SD);
     LinuxFile(SDClass &sd = SD);
+    ~LinuxFile() override;
 
     static std::streampos fileSize( const char* filePath );
     static bool is_directory( const char* pzPath );

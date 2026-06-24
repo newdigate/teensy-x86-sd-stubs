@@ -5,7 +5,7 @@ const char *File::name(void) {
     return file->_fileName;
 }
 
-File::File(AbstractFile *abs) : file(abs) {
+File::File(AbstractFile *abs) : file(std::shared_ptr<AbstractFile>(abs)) {
 
 }
 
@@ -36,8 +36,11 @@ uint32_t File::size() {
 void File::close() {
     if (file != nullptr) {
         file->close();
-        file = nullptr;
-    } else 
+        // Release this File's reference to the impl. The underlying
+        // AbstractFile is destroyed once the last shared_ptr (across all
+        // copies of this File) is released.
+        file.reset();
+    } else
     {
         Serial.println("WARNING: File::close() - file is already closed!!!!");
     }
