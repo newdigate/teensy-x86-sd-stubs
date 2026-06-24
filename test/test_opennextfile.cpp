@@ -23,18 +23,20 @@ BOOST_AUTO_TEST_SUITE(opennextfile_tests)
         BOOST_REQUIRE(SD.mkdir(subdir));
 
         File wa = SD.open(fileA, O_WRITE);
-        BOOST_REQUIRE(wa);
+        // File::operator bool() is non-const, so convert explicitly before
+        // handing the result to a Boost assertion (which takes a const ref).
+        if (!wa) BOOST_FAIL("could not open alpha.txt for write");
         wa.write((const uint8_t *)"a", 1);
         wa.close();
 
         File wb = SD.open(fileB, O_WRITE);
-        BOOST_REQUIRE(wb);
+        if (!wb) BOOST_FAIL("could not open beta.txt for write");
         wb.write((const uint8_t *)"b", 1);
         wb.close();
 
         // Act: iterate the directory collecting child names.
         File dir = SD.open(subdir, O_READ);
-        BOOST_REQUIRE(dir);
+        if (!dir) BOOST_FAIL("could not open onf_dir for read");
         BOOST_REQUIRE(dir.isDirectory());
 
         std::vector<std::string> names;
