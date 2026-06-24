@@ -100,14 +100,16 @@ size_t LinuxFile::write(const uint8_t *buf, size_t size) {
         return 0;
     }
 
-    _size += size;
     char * memblock = (char *)buf;
-
 
     size_t before = mockFile.tellp(); //current pos
     if (mockFile.write(memblock, size)) {
+        size_t after = mockFile.tellp();
         //compute the difference
-        size_t numberOfBytesWritten = (size_t)mockFile.tellp() - before;
+        size_t numberOfBytesWritten = after - before;
+        //grow size only if the write extended past the current end-of-file
+        if ((int32_t)after > _size)
+            _size = (int32_t)after;
         return numberOfBytesWritten;
     }
 
