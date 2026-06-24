@@ -25,7 +25,7 @@ uint32_t File::position() {
     return file->position();
 }
 bool File::truncate(uint64_t size) {
-    return file->truncate();
+    return file->truncate(size);
 }
 
 
