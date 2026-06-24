@@ -61,6 +61,16 @@ LinuxFile::LinuxFile(const char *name, const char *path, uint8_t mode, SDClass &
     _fileName = name;
 }
 
+LinuxFile::~LinuxFile() {
+    if (mockFile.is_open())
+        mockFile.close();
+    if (dp != NULL)
+        closedir(dp);
+    // localFileName is declared `const char *`; cast away const to delete[].
+    delete[] (char*)localFileName;
+    delete[] localPath;
+}
+
 std::streampos LinuxFile::fileSize( const char* filePath ){
     std::streampos fsize = 0;
     std::ifstream file( filePath, std::ios::binary );
