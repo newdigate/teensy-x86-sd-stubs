@@ -115,9 +115,14 @@ size_t LinuxFile::write(const uint8_t *buf, size_t size) {
 }
 
 int LinuxFile::read() {
-    char p[1];
-    mockFile.read(p, 1);
-    return p[0];
+    if (! mockFile.is_open())
+        return -1;
+
+    char p;
+    if (!mockFile.read(&p, 1))
+        return -1;   // EOF or error
+
+    return static_cast<unsigned char>(p);
 }
 
 int LinuxFile::peek() {
