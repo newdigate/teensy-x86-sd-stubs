@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(teensy_x86_sd_stubs C CXX)
 set(teensy_x86_sd_stubs_VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
 		File.cpp
@@ -26,3 +26,7 @@ set(UTILITY_HEADER_FILES
 		utility/SdInfo.h)
 
 add_library(teensy_x86_sd_stubs SHARED STATIC ${HEADER_FILES} ${UTILITY_HEADER_FILES} ${SOURCE_FILES})
+
+# <filesystem> requires C++17. Expose this as a PUBLIC requirement so consumers
+# (e.g. the test executable) inherit the C++17 standard transitively.
+target_compile_features(teensy_x86_sd_stubs PUBLIC cxx_std_17)

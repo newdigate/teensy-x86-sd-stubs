@@ -52,7 +52,11 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include "SD.h"
+
+namespace fs = std::filesystem;
+
 namespace SDLib {
 
 // Used by `getNextPathComponent`
@@ -467,10 +471,15 @@ bool SDClass::mkdir(const char *filepath) {
 		path = _sdCardFolderLocation + "/" + std::string(filepath);
 
     if (!exists(path.c_str())) {
-        std::string cmd = std::string("mkdir -p \"") + std::string(path) + "\"";
-        int result = system(cmd.c_str());
-    	if (result != 0) Serial.printf("Unable to mkdir '%s'\n", filepath);
-        return result == 0;
+        try {
+            // create_directories returns false if the directory already
+            // exists; treat that as success to mirror the previous behaviour.
+            fs::create_directories(path);
+        } catch (const std::exception &e) {
+            Serial.printf("Unable to mkdir '%s'\n", filepath);
+            return false;
+        }
+        return true;
     }
     return true;
 }
@@ -481,8 +490,11 @@ bool SDClass::rmdir(const char *filepath) {
 
     std::string path = _sdCardFolderLocation + "/" + std::string(filepath);
     if (exists(filepath)) {
-        std::string cmd = std::string("rm -rf ") + std::string(path);
-        system(cmd.c_str());
+        try {
+            fs::remove_all(path);
+        } catch (const std::exception &e) {
+            Serial.printf("Unable to rmdir '%s'\n", filepath);
+        }
         return true;
     }
     return true;
@@ -491,11 +503,14 @@ bool SDClass::rmdir(const char *filepath) {
 bool SDClass::remove(const char *filepath) {
     if (_sdCardFolderLocation.size() == 0)
         return false;
-    
+
     std::string path = _sdCardFolderLocation + "/" + std::string(filepath);
     if (exists(filepath)) {
-        std::string cmd = std::string("rm -rf ") + std::string(path);
-        system(cmd.c_str());
+        try {
+            fs::remove_all(path);
+        } catch (const std::exception &e) {
+            Serial.printf("Unable to remove '%s'\n", filepath);
+        }
         return true;
     }
     return true;
