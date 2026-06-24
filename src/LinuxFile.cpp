@@ -15,6 +15,7 @@
 #include "SD.h"
 
 #include <string>
+#include <cstring>
 #include <unistd.h>
 
 LinuxFile::LinuxFile(const char *name, const char *path, uint8_t mode, SDClass &sd) : AbstractFile(name), _sd(sd) {
@@ -202,20 +203,22 @@ File LinuxFile::openNextFile(void) {
     if (isCurrentFileADirectory){
         while (true) {
             entry = readdir(dp);
-        
+
             if (entry != NULL) {
+                if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+                    continue;
                 auto l = _sd.getSDCardFolderPath().length();
                 std::string lfnString = std::string( localFileName );
                 std::string final = lfnString.substr(l+1, lfnString.length()-l-1);
                 File f = File(new LinuxFile(entry->d_name, final.c_str(), O_READ, this->_sd));
                 return f;
-            } else 
+            } else
                 break;
         }
     }
 
-    
-    //closedir(dp);
+    closedir(dp);
+    dp = NULL;
 
     return File( new InMemoryFile());
 }
