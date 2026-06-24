@@ -416,13 +416,14 @@ File SDClass::open(const char *filepath, uint8_t mode) {
         std::string pathString = std::string(filepath);
         std::string fileNameString = std::string(filepath);
         size_t last_slash_idx = pathString.rfind('/');
-        char *path = "";
+        const char *path = "";
         if (std::string::npos != last_slash_idx)
         {
             fileNameString = fileNameString.substr(last_slash_idx+1, strlen(filepath)-last_slash_idx-1);
             std::string temppath = pathString.substr(0, last_slash_idx);
-            path = new char[temppath.length() + 1] {0};
-            memcpy(path, temppath.c_str(), temppath.length());
+            char *pathBuf = new char[temppath.length() + 1] {0};
+            memcpy(pathBuf, temppath.c_str(), temppath.length());
+            path = pathBuf;
         }
         result = new LinuxFile(fileNameString.c_str(), path, mode, *this);
     }
