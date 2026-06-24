@@ -32,3 +32,6 @@
 *.app
 
 cmake-build-debug
+
+# Claude Code agent worktrees (transient, never committed)
+.claude/worktrees/
