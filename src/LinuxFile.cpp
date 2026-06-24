@@ -204,7 +204,7 @@ File LinuxFile::openNextFile(void) {
 }
 
 bool LinuxFile::truncate(uint64_t size) {
-    if (::truncate(_fileName, size) != 0)
+    if (::truncate(localFileName, size) != 0)
         return false;
     return true;
 }
