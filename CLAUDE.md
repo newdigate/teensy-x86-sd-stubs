@@ -39,6 +39,39 @@ Tests require Boost's unit test framework. On Ubuntu: `sudo apt-get install
 libboost-test-dev`. Without `-DBUILD_TESTS=On` only the `teensy_x86_sd_stubs`
 library is built (the `test/` subdir is skipped).
 
+### How the dependency fetch works (and how to build without the helper)
+
+`DeclareAndFetch` (from the `cmake-declare-and-fetch` repo) is just a **one-file
+wrapper around CMake's `FetchContent`**. The whole macro is:
+
+```cmake
+macro(DeclareAndFetch name giturl branch cmakeprefixes)
+    # (dedupe guard via a cached list omitted)
+    FetchContent_Declare(${name} GIT_REPOSITORY ${giturl} GIT_TAG ${branch})
+    FetchContent_Populate(${name})
+    # for each space-separated prefix, wire its source dir into the build:
+    foreach(prefix IN LISTS cmakeprefixes)
+        include_directories(${${name}_SOURCE_DIR}/${prefix})
+        add_subdirectory(${${name}_SOURCE_DIR}/${prefix} ${${name}_BINARY_DIR}/${prefix})
+    endforeach()
+endmacro()
+```
+
+So `DeclareAndFetch(teensy_x86_stubs <url> main src)` clones the repo, then
+`include_directories` + `add_subdirectory` on its `src/` prefix — nothing more.
+(The repo also defines `DeclareAndFetchNoSource` = populate only, and
+`DeclareAndFetchSubLibrary` = wire an already-fetched sub-prefix.)
+
+**Why this matters:** both fetches need network at configure time. If
+`cmake-declare-and-fetch` itself is unreachable (e.g. a sandboxed/egress-blocked
+environment), you don't need that repo at all — define the macro inline (paste
+the snippet above into `cmake_declare_and_fetch.cmake.in` after
+`include(FetchContent)` instead of fetching it). The `teensy-x86-stubs` core
+mock is a **real code dependency** and must still be fetched (or pre-placed and
+pulled in with `add_subdirectory`); there is no building the library without it.
+CI on GitHub Actions has network for both, so this is only a concern for
+restricted local/agent environments.
+
 ## Architecture
 
 The public surface is `SDClass` (instantiated as the global `SD`) plus `File`,
