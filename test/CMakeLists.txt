@@ -10,8 +10,14 @@ include_directories (${Boost_INCLUDE_DIRS})
 
 include_directories(../src)
 
-add_executable(tests
-        test_write.cpp)
+# All test translation units are picked up automatically. Drop a new
+# test_<area>.cpp file in this directory and it is compiled into the single
+# `tests` executable -- no edits to this file required. See TESTING.md.
+# CONFIGURE_DEPENDS makes CMake re-glob on rebuild so CI fresh builds always
+# see new files.
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test_*.cpp")
+
+add_executable(tests ${TEST_SOURCES})
 
 target_link_libraries(tests teensy_x86_sd_stubs)
 target_link_libraries(tests teensy_x86_stubs)
