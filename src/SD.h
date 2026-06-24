@@ -147,9 +147,9 @@ private:
     SdFile getParentDir(const char *filepath, int *indx);
 
     std::string _sdCardFolderLocation;
-    bool _useMockData;
-    char *_fileData;
-    uint32_t _fileSize;
+    bool _useMockData = false;
+    char *_fileData = nullptr;
+    uint32_t _fileSize = 0;
 
 public:
     SDClass() {
